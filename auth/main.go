@@ -2,15 +2,16 @@ package main
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/base64"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"golang.org/x/oauth2"
 )
-
-var state = "random" // TODO
 
 func main() {
 	cfg := &oauth2.Config{
@@ -26,11 +27,13 @@ func main() {
 	}
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		http.Redirect(w, r, cfg.AuthCodeURL(state), http.StatusTemporaryRedirect)
+		oauthState := generateStateCookie(w)
+		http.Redirect(w, r, cfg.AuthCodeURL(oauthState), http.StatusTemporaryRedirect)
 	})
 
 	http.HandleFunc("/auth/callback", func(w http.ResponseWriter, r *http.Request) {
-		if r.FormValue("state") != state {
+		oauthState, _ := r.Cookie("oauthState")
+		if r.FormValue("state") != oauthState.Value {
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte("State does not match."))
 			return
@@ -66,4 +69,20 @@ func main() {
 
 	log.Println("Listening on :3000")
 	log.Fatal(http.ListenAndServe(":3000", nil))
+}
+
+func generateStateCookie(w http.ResponseWriter) string {
+	var expiration = time.Now().Add(365 * 24 * time.Hour)
+	b := make([]byte, 16)
+	if _, err := rand.Read(b); err != nil {
+		log.Print(err)
+	}
+	state := base64.URLEncoding.EncodeToString(b)
+	cookie := http.Cookie{
+		Name:    "oauthState",
+		Value:   state,
+		Expires: expiration,
+	}
+	http.SetCookie(w, &cookie)
+	return state
 }
