@@ -1,5 +1,7 @@
+import Array "mo:base/Array";
 import Blob "mo:base/Blob";
 import HashMap "mo:base/HashMap";
+import Iter "mo:base/Iter";
 import Random "mo:base/Random";
 import Result "mo:base/Result";
 import Text "mo:base/Text";
@@ -19,10 +21,30 @@ shared({caller = owner}) actor class Accounts() {
         principal     : Principal;
     };
 
+    private stable var stableAccounts : [(DiscordId, Account)] = [];
+
     // All known accounts.
-    private let accounts = HashMap.HashMap<DiscordId, Account>(
-        10, Text.equal, Text.hash,
+    private let accounts = HashMap.fromIter<DiscordId, Account>(
+        stableAccounts.vals(), 10, Text.equal, Text.hash,
     );
+
+    system func preupgrade() {
+        stableAccounts := Iter.toArray(accounts.entries());
+    };
+
+    system func postupgrade() {
+        stableAccounts := [];
+    };
+
+    public query func discordNames() : async [Text] {
+        let as = Array.init<Text>(accounts.size(), "");
+        var i = 0;
+        for ((_, a) in accounts.entries()) {
+            as[i] := a.userName # "#" # a.discriminator;
+            i += 1;
+        };
+        Array.freeze(as);
+    };
 
     // A map of link requests added by the backend.
     // id -> (account, ttl)
