@@ -1,1 +1,1 @@
-# Beer DAO
+# DAO/Discord Integration
