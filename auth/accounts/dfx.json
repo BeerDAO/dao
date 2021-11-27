@@ -4,7 +4,7 @@
   "canisters": {
     "accounts": {
       "type": "motoko",
-      "main": "main.mo"
+      "main": "src/main.mo"
     }
   },
   "defaults": {

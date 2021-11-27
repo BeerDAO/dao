@@ -1,14 +1,21 @@
 import Array "mo:base/Array";
 import Blob "mo:base/Blob";
+import Buffer "mo:base/Buffer";
 import HashMap "mo:base/HashMap";
 import Hex "mo:encoding/Hex";
 import Iter "mo:base/Iter";
+import Principal "mo:base/Principal";
 import Random "mo:base/Random";
 import Result "mo:base/Result";
 import Text "mo:base/Text";
 import Time "mo:base/Time";
 
+import Axon "Axon";
+
 shared({caller = owner}) actor class Accounts() {
+
+    private let axon : Axon.Interface = actor(Axon.AxonId);
+
     public type DiscordId = Text;
     public type DiscordAccount = {
         id            : DiscordId;
@@ -37,14 +44,20 @@ shared({caller = owner}) actor class Accounts() {
         stableAccounts := [];
     };
 
-    public query func discordNames() : async [Text] {
-        let as = Array.init<Text>(accounts.size(), "");
-        var i = 0;
-        for ((_, a) in accounts.entries()) {
-            as[i] := a.username # "#" # a.discriminator;
-            i += 1;
+    public shared func ledger() : async [(Text, Nat)] {
+        let l = await axon.ledger(182);
+        let t = HashMap.fromIter<Principal, Nat>(
+            l.vals(), 0, Principal.equal, Principal.hash,
+        );
+        let d = Buffer.Buffer<(Text, Nat)>(accounts.size());
+        for ((_, v) in accounts.entries()) {
+            let n = switch (t.get(v.principal)) {
+                case (? n)  n;
+                case (null) 0;
+            };
+            d.add((v.username # "#" # v.discriminator, n));
         };
-        Array.freeze(as);
+        d.toArray();
     };
 
     // A map of link requests added by the backend.
