@@ -31,12 +31,11 @@ client.on("ready", async () => {
     const accounts = await accountsAgent.ledger() as [string, bigint][];
     accounts.forEach((a) => {
         const m = members.find((m : GuildMember) => {
-            let name = `${m.user.username}#${m.user.discriminator}`;
-            return name == a[0];
-        })
-        if (m) m.roles.add(memberRole as Role)
+            return m.id == a[0];
+        });
+        if (m) m.roles.add(memberRole as Role);
     });
-    console.log("Bot is ready.")
+    console.log("Bot is ready.");
 })
 
 client.login(process.env.DISCORD_BOT_TOKEN);

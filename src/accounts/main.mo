@@ -50,12 +50,12 @@ shared({caller = owner}) actor class Accounts() {
             l.vals(), 0, Principal.equal, Principal.hash,
         );
         let d = Buffer.Buffer<(Text, Nat)>(accounts.size());
-        for ((_, v) in accounts.entries()) {
+        for ((k, v) in accounts.entries()) {
             let n = switch (t.get(v.principal)) {
                 case (? n)  n;
                 case (null) 0;
             };
-            d.add((v.username # "#" # v.discriminator, n));
+            d.add((k, n));
         };
         d.toArray();
     };
