@@ -14,6 +14,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/joho/godotenv"
 	"golang.org/x/oauth2"
 )
 
@@ -47,10 +48,14 @@ func call(dir string, subCmd string, args ...string) ([]byte, int, error) {
 }
 
 func main() {
+	if err := godotenv.Load(); err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	cfg := &oauth2.Config{
 		RedirectURL:  "http://localhost:3000/discord/callback",
-		ClientID:     os.Getenv("CLIENT_ID"),
-		ClientSecret: os.Getenv("CLIENT_SECRET"),
+		ClientID:     os.Getenv("DISCORD_CLIENT_ID"),
+		ClientSecret: os.Getenv("DISCORD_CLIENT_SECRET"),
 		Scopes:       []string{"identify"},
 		Endpoint: oauth2.Endpoint{
 			AuthURL:   "https://discord.com/api/oauth2/authorize",
@@ -103,7 +108,7 @@ func main() {
 			return
 		}
 
-		raw, _, err := call("./accounts", "canister", []string{
+		raw, _, err := call(".", "canister", []string{
 			"--network=ic", "call", "accounts", "addDiscordAccount",
 			fmt.Sprintf("(record { id=\"%s\"; username=\"%s\"; discriminator=\"%s\" })", account.ID, account.Username, account.Discriminator),
 		}...)
@@ -125,7 +130,7 @@ $ dfx canister --network=ic --no-wallet call 45pum-byaaa-aaaam-aaanq-cai linkPri
 		)))
 	})
 
-	log.Println("Listening on :3000")
+	log.Println("Listening on http://localhost:3000")
 	log.Fatal(http.ListenAndServe(":3000", nil))
 }
 

@@ -1,3 +1,6 @@
 .env
+.dfx/
+.vessel/
+
 dist/
 node_modules/
