@@ -71,6 +71,11 @@ shared({caller = owner}) actor class Accounts() {
     public shared({caller}) func addDiscordAccount(account : DiscordAccount) : async Text {
         assert (caller == owner);
 
+        switch (accounts.get(account.id)) {
+            case (? _) assert(false);
+            case (_) {};
+        };
+
         let now = Time.now();
         let blob = await Random.blob();
         let key = Hex.encode(Blob.toArray(blob));

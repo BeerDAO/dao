@@ -48,7 +48,7 @@ func call(dir string, subCmd string, args ...string) ([]byte, int, error) {
 
 func main() {
 	cfg := &oauth2.Config{
-		RedirectURL:  "http://localhost:3000/auth/callback",
+		RedirectURL:  "http://localhost:3000/discord/callback",
 		ClientID:     os.Getenv("CLIENT_ID"),
 		ClientSecret: os.Getenv("CLIENT_SECRET"),
 		Scopes:       []string{"identify"},
@@ -59,12 +59,12 @@ func main() {
 		},
 	}
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/discord/", func(w http.ResponseWriter, r *http.Request) {
 		oauthState := generateStateCookie(w)
 		http.Redirect(w, r, cfg.AuthCodeURL(oauthState), http.StatusTemporaryRedirect)
 	})
 
-	http.HandleFunc("/auth/callback", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/discord/callback", func(w http.ResponseWriter, r *http.Request) {
 		oauthState, _ := r.Cookie("oauthState")
 		if r.FormValue("state") != oauthState.Value {
 			w.WriteHeader(http.StatusBadRequest)
