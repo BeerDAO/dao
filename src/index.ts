@@ -7,6 +7,11 @@ if (!process.env.DISCORD_BOT_TOKEN) {
     process.exit(1);
 };
 
+if (!process.env.DISCORD_GUILD_ID) {
+    console.warn("DISCORD_GUILD_ID not set!");
+    process.exit(1);
+};
+
 const client = new Client({
     intents: [
         Intents.FLAGS.GUILDS,

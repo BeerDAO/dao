@@ -68,7 +68,7 @@ shared({caller = owner}) actor class Accounts() {
 
     private let hour = 3600000000000; // In nanoseconds.
 
-    public shared({caller}) func addDiscordAccount(account : DiscordAccount) : async Text {
+    public shared({caller}) func addDiscordAccountRequest(account : DiscordAccount) : async Text {
         assert (caller == owner);
 
         switch (accounts.get(account.id)) {
@@ -88,6 +88,15 @@ shared({caller = owner}) actor class Accounts() {
         
         // Return the key linked to the request, this is needed to link the principal.
         key;
+    };
+
+    public shared({caller}) func addDiscordAccount(principal : Principal, account : DiscordAccount) {
+        assert (caller == owner);
+        accounts.put(account.id, {
+            username      = account.username;
+            discriminator = account.discriminator;
+            principal     = principal;
+        });
     };
 
     public shared({caller}) func listLinkRequests() : async [(Text, (DiscordAccount, Int))] {
