@@ -1,8 +1,8 @@
-import "dotenv/config";
-
 import { REST } from "@discordjs/rest";
 import { Routes } from "discord-api-types/v9";
 import { readdirSync } from "fs";
+
+import config from "../config";
 
 const commands = [];
 const commandFiles = readdirSync(`${__dirname}/../commands`).filter(f => f.endsWith(".js"));
@@ -13,7 +13,7 @@ for (const file of commandFiles) {
 	commands.push(command.data.toJSON());
 }
 
-const rest = new REST({ version: "9" }).setToken(process.env.DISCORD_BOT_TOKEN!);
+const rest = new REST({ version: "9" }).setToken(config.BOT_TOKEN);
 
 (async () => {
 	try {
@@ -21,8 +21,8 @@ const rest = new REST({ version: "9" }).setToken(process.env.DISCORD_BOT_TOKEN!)
 
 		await rest.put(
 			Routes.applicationGuildCommands(
-				process.env.DISCORD_CLIENT_ID!,
-				process.env.DISCORD_GUILD_ID!,
+				config.CLIENT_ID,
+				config.GUILD_ID,
 			),
 			{ body: commands },
 		);

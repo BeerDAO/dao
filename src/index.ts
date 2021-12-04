@@ -1,19 +1,8 @@
-import "dotenv/config";
-
 import { Client, Collection, CommandInteraction, GuildMember, Intents, Role, } from "discord.js";
 import { readdirSync } from "fs";
 
 import { cacheAccounts } from "./accounts";
-
-if (!process.env.DISCORD_BOT_TOKEN) {
-    console.warn("DISCORD_BOT_TOKEN not set!");
-    process.exit(1);
-}
-
-if (!process.env.DISCORD_GUILD_ID) {
-    console.warn("DISCORD_GUILD_ID not set!");
-    process.exit(1);
-}
+import config from "./config";
 
 const client = new Client({
     intents: [
@@ -23,7 +12,7 @@ const client = new Client({
 });
 
 client.on("ready", async () => {
-    const guild = client.guilds.cache.get(process.env.DISCORD_GUILD_ID!);
+    const guild = client.guilds.cache.get(config.GUILD_ID);
     if (!guild) return;
     let memberRole = guild.roles.cache.find((r : Role) => {
         return r.name == "Member";
