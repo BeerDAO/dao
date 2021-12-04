@@ -18,9 +18,10 @@ const rest = new REST({ version: "9" }).setToken(process.env.DISCORD_BOT_TOKEN!)
 		console.log("Started refreshing application (/) commands.");
 
 		await rest.put(
-			Routes.applicationCommands(
-                process.env.DISCORD_CLIENT_ID!,
-            ),
+			Routes.applicationGuildCommands(
+				process.env.DISCORD_CLIENT_ID!,
+				process.env.DISCORD_GUILD_ID!,
+			),
 			{ body: commands },
 		);
 

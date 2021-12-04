@@ -1,5 +1,5 @@
 import { HttpAgent } from "@dfinity/agent";
-import * as accounts from "./accounts";
+import * as accounts from "./accounts/index";
 
 import fetch from 'node-fetch';
 (global as any).fetch = fetch;
