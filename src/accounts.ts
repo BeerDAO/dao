@@ -15,8 +15,8 @@ export async function cacheAccounts() : Promise<[string, bigint][]> {
     } catch (e) {
         console.error(e);
         return [];
-    };
-};
+    }
+}
 
 export const getAccounts = () => {
     try {
@@ -25,5 +25,5 @@ export const getAccounts = () => {
     } catch (e) {
         console.warn(e);
         return [];
-    };
+    }
 };

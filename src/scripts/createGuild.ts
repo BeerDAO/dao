@@ -1,10 +1,11 @@
-import { Client, Intents, TextChannel, } from "discord.js";
 import "dotenv/config";
+
+import { Client, Intents, TextChannel, } from "discord.js";
 
 if (!process.env.DISCORD_BOT_TOKEN) {
     console.warn("DISCORD_BOT_TOKEN not set!");
     process.exit(1);
-};
+}
 
 const client = new Client({
     intents: [Intents.FLAGS.GUILDS],

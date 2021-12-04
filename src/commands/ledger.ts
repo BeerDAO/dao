@@ -1,5 +1,6 @@
-import { CommandInteraction, GuildMember, MessageEmbed } from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
+import { CommandInteraction, GuildMember, MessageEmbed } from "discord.js";
+
 import { getAccounts } from "../accounts";
 
 module.exports = {
