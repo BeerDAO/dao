@@ -1,7 +1,6 @@
-import { Client, Collection, CommandInteraction, GuildMember, Intents, Role, } from "discord.js";
+import { Client, Collection, CommandInteraction, Intents, Role, } from "discord.js";
 import { readdirSync } from "fs";
 
-import { cacheAccounts } from "./accounts";
 import config from "./config";
 
 const client = new Client({
@@ -24,16 +23,6 @@ client.on("ready", async () => {
             hoist: true,
         });
     }
-    const members = await guild.members.fetch();
-    console.log("Syncing accounts...");
-    const accounts = await cacheAccounts();
-    accounts.forEach(([id]) => {
-        const m = members.find((m : GuildMember) => {
-            return m.id == id;
-        });
-        if (m) m.roles.add(memberRole as Role);
-    });
-    console.log("Done syncing.");
     console.log("Bot is ready.");
 })
 

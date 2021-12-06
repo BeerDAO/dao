@@ -13,7 +13,7 @@ export async function cacheAccounts() : Promise<[string, bigint][]> {
         writeFileSync(PATH, stringify(txs));
         return txs;
     } catch (e) {
-        console.error(e);
+        console.warn(e);
         return [];
     }
 }
